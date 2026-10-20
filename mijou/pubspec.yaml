@@ -1,0 +1,17 @@
+name: mijou
+description: Mijou, l'application de recettes qui cuisine avec ce que tu as dans ton frigo.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
