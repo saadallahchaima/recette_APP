@@ -38,4 +38,8 @@ lib/
 
 ## À améliorer ensuite
 
+<<<<<<< HEAD
 - Sauvegarde locale (`shared_preferences` ou `hive`) et vraies recettes (API ou JSON).
+=======
+- Sauvegarde locale (`shared_preferences` ou `hive`) et vraies recettes (API ou JSON).
+>>>>>>> e284807 (commit)
