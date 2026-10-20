@@ -13,21 +13,6 @@ flutter pub get
 flutter run
 ```
 
-`flutter create .` ne touche pas à `lib/` ni à `pubspec.yaml` : il ajoute seulement
-les dossiers de plateforme manquants.
-
-## Ajouter les photos des recettes
-
-Dans Figma, sélectionne chaque photo de recette, exporte-la en PNG (@2x) et place-la ici :
-
-```
-assets/images/coquillettes.png
-assets/images/poulet.png
-assets/images/galettes.png
-```
-
-Tant qu'une photo manque, l'app affiche un joli fond rose avec un émoji.
-
 ## Structure
 
 ```
