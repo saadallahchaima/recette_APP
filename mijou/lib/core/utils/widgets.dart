@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'data.dart';
+import '../../features/recipes/data/models/data.dart';
+import '../../features/recipes/presentation/controllers/app_state.dart';
 import 'theme.dart';
 
 void toast(BuildContext context, String message) {

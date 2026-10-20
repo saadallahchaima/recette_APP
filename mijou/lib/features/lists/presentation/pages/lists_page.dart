@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'data.dart';
-import 'pages_recipe.dart';
-import 'theme.dart';
-import 'widgets.dart';
+import '../../../../core/utils/theme.dart';
+import '../../../../core/utils/widgets.dart';
+import '../../../recipes/data/models/data.dart';
+import '../../../recipes/presentation/controllers/app_state.dart';
+import '../../../recipes/presentation/pages/recipe_page.dart';
 
 // ───────────────────────── Favoris ─────────────────────────
 

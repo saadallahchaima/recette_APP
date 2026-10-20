@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'data.dart';
-import 'theme.dart';
-import 'widgets.dart';
+import '../../../../core/utils/theme.dart';
+import '../../../../core/utils/widgets.dart';
+import '../../data/models/data.dart';
+import '../controllers/app_state.dart';
 
 void openRecipe(BuildContext context, Recipe r) => Navigator.of(context)
     .push(MaterialPageRoute<void>(builder: (_) => DetailPage(recipe: r)));

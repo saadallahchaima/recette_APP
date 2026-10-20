@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'data.dart';
-import 'pages_fridge.dart';
-import 'pages_home.dart';
-import 'pages_lists.dart';
-import 'theme.dart';
-import 'widgets.dart';
+import 'core/utils/theme.dart';
+import 'core/utils/widgets.dart';
+import 'features/fridge/presentation/pages/fridge_page.dart';
+import 'features/home/presentation/pages/home_page.dart';
+import 'features/lists/presentation/pages/lists_page.dart';
+import 'features/recipes/data/models/data.dart';
+import 'features/recipes/presentation/controllers/app_state.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
