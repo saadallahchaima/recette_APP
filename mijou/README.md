@@ -38,6 +38,4 @@ lib/
 
 ## À améliorer ensuite
 
-- Icônes kawaii du design : exporte-les en SVG depuis Figma, ajoute `flutter_svg`
-  et remplace les icônes Material de `widgets.dart` (navbar).
 - Sauvegarde locale (`shared_preferences` ou `hive`) et vraies recettes (API ou JSON).
