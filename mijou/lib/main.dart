@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'core/utils/theme.dart';
 import 'core/utils/widgets.dart';
 import 'features/fridge/presentation/pages/fridge_page.dart';
 import 'features/home/presentation/pages/home_page.dart';
 import 'features/lists/presentation/pages/lists_page.dart';
-import 'features/recipes/data/models/data.dart';
 import 'features/recipes/presentation/controllers/app_state.dart';
 
 void main() {
@@ -17,7 +17,12 @@ void main() {
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
   ));
-  runApp(const MijouApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppState(),
+      child: const MijouApp(),
+    ),
+  );
 }
 
 class MijouApp extends StatelessWidget {
@@ -47,24 +52,21 @@ class Shell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppState.i;
-    return ValueListenableBuilder<int>(
-      valueListenable: s.tab,
-      builder: (context, tab, _) => Scaffold(
-        body: SafeArea(
-          bottom: false,
-          child: IndexedStack(
-            index: tab,
-            children: const [
-              HomePage(),
-              FridgePage(),
-              FavoritesPage(),
-              ShoppingPage(),
-            ],
-          ),
+    final s = context.watch<AppState>();
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: IndexedStack(
+          index: s.tab,
+          children: const [
+            HomePage(),
+            FridgePage(),
+            FavoritesPage(),
+            ShoppingPage(),
+          ],
         ),
-        bottomNavigationBar: MijouNavBar(index: tab, onTap: (i) => s.tab.value = i),
       ),
+      bottomNavigationBar: MijouNavBar(index: s.tab, onTap: s.setTab),
     );
   }
 }

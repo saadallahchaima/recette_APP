@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/utils/theme.dart';
 import '../../../../core/utils/widgets.dart';
@@ -14,7 +15,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = AppState.i;
+    final s = context.read<AppState>();
     return ListenableBuilder(
       listenable: s,
       builder: (context, _) => ListView(
@@ -43,7 +44,8 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Row(children: [
-            const Icon(Icons.auto_awesome_rounded, size: 17, color: Pal.greenInk),
+            const Icon(Icons.auto_awesome_rounded,
+                size: 17, color: Pal.greenInk),
             const SizedBox(width: 8),
             Expanded(
               child: Text('Fait maison, pas besoin d’en faire des tonnes.',
@@ -88,7 +90,7 @@ class HomePage extends StatelessWidget {
               builder: (context) => PillButton(
                 'J’ajoute mes ingrédients',
                 icon: Icons.add_rounded,
-                onTap: () => AppState.i.tab.value = 1,
+                onTap: () => context.read<AppState>().setTab(1),
               ),
             ),
           ],
@@ -118,19 +120,39 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <(IconData, String, String, VoidCallback)>[
-      (Icons.person_outline_rounded, 'Mon profil', 'Mes préférences, mes recettes',
-          () => toast(context, 'Ton profil arrive bientôt !')),
-      (Icons.shield_outlined, 'Préférences', 'Allergies, régimes, goûts',
-          () => toast(context, 'Les préférences arrivent bientôt !')),
-      (Icons.group_outlined, 'Ma famille', 'Partager les courses et les idées',
-          () => toast(context, 'Ta famille arrive bientôt !')),
-      (Icons.favorite_border_rounded, 'Recettes préférées',
-          'Mes meilleures idées en un coup d’œil', () {
-        AppState.i.tab.value = 2;
-        Navigator.of(context).pop();
-      }),
-      (Icons.help_outline_rounded, 'Aide', 'Conseils, minuteur et bonnes pratiques',
-          () => toast(context, 'Mijou est là si tu as un souci !')),
+      (
+        Icons.person_outline_rounded,
+        'Mon profil',
+        'Mes préférences, mes recettes',
+        () => toast(context, 'Ton profil arrive bientôt !')
+      ),
+      (
+        Icons.shield_outlined,
+        'Préférences',
+        'Allergies, régimes, goûts',
+        () => toast(context, 'Les préférences arrivent bientôt !')
+      ),
+      (
+        Icons.group_outlined,
+        'Ma famille',
+        'Partager les courses et les idées',
+        () => toast(context, 'Ta famille arrive bientôt !')
+      ),
+      (
+        Icons.favorite_border_rounded,
+        'Recettes préférées',
+        'Mes meilleures idées en un coup d’œil',
+        () {
+          context.read<AppState>().setTab(2);
+          Navigator.of(context).pop();
+        }
+      ),
+      (
+        Icons.help_outline_rounded,
+        'Aide',
+        'Conseils, minuteur et bonnes pratiques',
+        () => toast(context, 'Mijou est là si tu as un souci !')
+      ),
     ];
 
     return Scaffold(
@@ -195,7 +217,8 @@ class MenuPage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(it.$2, style: ts(16, w: FontWeight.w800, h: 1.35)),
+                                Text(it.$2,
+                                    style: ts(16, w: FontWeight.w800, h: 1.35)),
                                 const SizedBox(height: 2),
                                 Text(it.$3,
                                     style: ts(14, color: Pal.inkSoft, h: 1.35)),
@@ -214,7 +237,7 @@ class MenuPage extends StatelessWidget {
       bottomNavigationBar: MijouNavBar(
         index: 0,
         onTap: (i) {
-          AppState.i.tab.value = i;
+          context.read<AppState>().setTab(i);
           Navigator.of(context).pop();
         },
       ),

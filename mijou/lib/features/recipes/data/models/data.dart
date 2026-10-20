@@ -6,15 +6,16 @@ const kBaseServings = 4;
 class Cat {
   final String name;
   final IconData icon;
-  const Cat(this.name, this.icon);
+  final String image;
+  const Cat(this.name, this.icon, this.image);
 }
 
 const kCats = <Cat>[
-  Cat('Légumes', Icons.eco_rounded),
-  Cat('Viandes & poissons', Icons.set_meal_rounded),
-  Cat('Produits laitiers', Icons.local_drink_rounded),
-  Cat('Féculents', Icons.grain_rounded),
-  Cat('Épicerie', Icons.soup_kitchen_rounded),
+  Cat('Légumes', Icons.eco_rounded, 'assets/images/legumes.png'),
+  Cat('Viandes & poissons', Icons.set_meal_rounded, 'assets/images/poissons.png'),
+  Cat('Produits laitiers', Icons.local_drink_rounded, 'assets/images/produit_laitiers.png'),
+  Cat('Féculents', Icons.grain_rounded, 'assets/images/feculents.png'),
+  Cat('Épicerie', Icons.soup_kitchen_rounded, 'assets/images/epecerie.png'),
 ];
 
 /// Un ingrédient présent dans le frigo.
@@ -93,10 +94,12 @@ final List<Recipe> kRecipes = [
     minutes: 20,
     kicker: 'La bonne idée du soir',
     badge: 'Un câlin dans une assiette',
-    intro: 'Courgette, crème et fromage fondant.\nLe dîner qui met tout le monde d’accord.',
+    intro:
+        'Courgette, crème et fromage fondant.\nLe dîner qui met tout le monde d’accord.',
     third: 'Végétarien',
     emoji: '🍝',
-    tip: 'Pas besoin d’éplucher les courgettes.\nUne petite corvée en moins, hop !',
+    tip:
+        'Pas besoin d’éplucher les courgettes.\nUne petite corvée en moins, hop !',
     tags: {'rapide', 'enfants', 'végétarien'},
     ings: const [
       Ing('Coquillettes', 'coquillette', 300, 'g'),
@@ -107,21 +110,25 @@ final List<Recipe> kRecipes = [
       Ing('Emmental râpé', 'emmental', 80, 'g', miss: '80 g d’emmental'),
     ],
     steps: [
-      CookStep('On se prépare',
+      CookStep(
+          'On se prépare',
           'Lave les courgettes et coupe-les en fines demi-rondelles. Fais bouillir une casserole d’eau salée.',
           5,
           tip: 'Pas besoin d’éplucher les courgettes !'),
-      CookStep('Les courgettes au chaud',
+      CookStep(
+          'Les courgettes au chaud',
           'Chauffe l’huile dans une poêle. Ajoute les courgettes et fais-les revenir 8 min à feu moyen en remuant.',
           8,
           cook:
               'Chauffe 1 cuillère d’huile dans une poêle. Ajoute les courgettes et fais-les revenir 8 min à feu moyen.',
           tip: 'Remue de temps en temps. Elles aiment bien danser !'),
-      CookStep('Les pâtes font trempette',
+      CookStep(
+          'Les pâtes font trempette',
           'Pendant ce temps, cuis les coquillettes 8 min dans l’eau bouillante. Garde une louche d’eau, puis égoutte.',
           8,
           tip: 'Garde l’eau de cuisson, c’est le secret du crémeux.'),
-      CookStep('Le câlin crémeux',
+      CookStep(
+          'Le câlin crémeux',
           'Ajoute la crème, les pâtes et l’emmental aux courgettes. Mélange 2 min à feu doux. Un peu d’eau de cuisson si besoin, et à table !',
           2,
           tip: 'Goûte avant de servir, Mijou a confiance en toi !'),
@@ -134,7 +141,8 @@ final List<Recipe> kRecipes = [
     minutes: 30,
     kicker: 'Le réconfort du jour',
     badge: 'Doux comme un dimanche',
-    intro: 'Poulet fondant, carottes tendres et sauce crémeuse.\nUn plat qui fait du bien.',
+    intro:
+        'Poulet fondant, carottes tendres et sauce crémeuse.\nUn plat qui fait du bien.',
     third: 'Gourmand',
     emoji: '🍗',
     tip: 'Les carottes deviennent encore plus douces\navec un petit couvercle.',
@@ -154,11 +162,13 @@ final List<Recipe> kRecipes = [
       CookStep('Le poulet dore',
           'Fais dorer le poulet 5 min dans l’huile chaude, en remuant.', 5,
           tip: 'Ne le bouscule pas trop, il doit dorer.'),
-      CookStep('Carottes et crème',
+      CookStep(
+          'Carottes et crème',
           'Ajoute les carottes, la crème et un peu de sel. Laisse mijoter 15 min à feu doux.',
           15,
           tip: 'Un petit couvercle et la magie opère.'),
-      CookStep('Le riz en renfort',
+      CookStep(
+          'Le riz en renfort',
           'Pendant ce temps, cuis le riz 10 min dans l’eau bouillante, puis égoutte et sers avec le poulet.',
           10,
           tip: 'À table, tout le monde !'),
@@ -171,7 +181,8 @@ final List<Recipe> kRecipes = [
     minutes: 25,
     kicker: 'Un petit rayon de soleil',
     badge: 'Un rayon de soleil',
-    intro: 'Carottes et riz dorés, croustillants dehors, tendres dedans.\nParfait pour les petits et les grands.',
+    intro:
+        'Carottes et riz dorés, croustillants dehors, tendres dedans.\nParfait pour les petits et les grands.',
     third: 'Végétarien',
     emoji: '🥕',
     tip: 'Aplatis bien les galettes\npour qu’elles soient croustillantes.',
@@ -187,12 +198,15 @@ final List<Recipe> kRecipes = [
     steps: [
       CookStep('On râpe', 'Épluche et râpe les carottes.', 5,
           tip: 'Une râpe à gros trous, c’est parfait.'),
-      CookStep('Le mélange doré',
+      CookStep(
+          'Le mélange doré',
           'Mélange les carottes, le riz cuit, l’œuf, la crème et une pincée de sel.',
           3,
           tip: 'Mélange avec les mains si tu veux, ça marche très bien !'),
-      CookStep('À la poêle',
-          'Chauffe l’huile, dépose des petits tas de mélange et aplatis-les.', 3,
+      CookStep(
+          'À la poêle',
+          'Chauffe l’huile, dépose des petits tas de mélange et aplatis-les.',
+          3,
           tip: 'Pas trop grosses, elles seront plus croustillantes.'),
       CookStep('Dorées des deux côtés',
           'Laisse dorer 4 min de chaque côté à feu moyen. Sers bien chaud !', 8,

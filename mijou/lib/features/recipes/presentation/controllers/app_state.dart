@@ -3,10 +3,13 @@ import 'package:flutter/foundation.dart';
 import '../../data/models/data.dart';
 
 class AppState extends ChangeNotifier {
-  AppState._();
-  static final AppState i = AppState._();
+  int tab = 0;
 
-  final ValueNotifier<int> tab = ValueNotifier<int>(0);
+  void setTab(int value) {
+    if (tab == value) return;
+    tab = value;
+    notifyListeners();
+  }
 
   final List<Pantry> pantry = [
     Pantry('Courgettes', '2', 'Légumes'),
@@ -23,7 +26,8 @@ class AppState extends ChangeNotifier {
 
   final List<ShopItem> shopping = [
     ShopItem('Emmental râpé', 'Pour tes coquillettes câlines', '80 g',
-        'Produits laitiers', recipeId: 'coquillettes'),
+        'Produits laitiers',
+        recipeId: 'coquillettes'),
   ];
 
   int get toBuy => shopping.where((s) => !s.checked).length;
@@ -44,20 +48,64 @@ class AppState extends ChangeNotifier {
   String guessCat(String name) {
     final n = name.toLowerCase();
     bool any(List<String> k) => k.any(n.contains);
-    if (any(['courgette', 'carotte', 'tomate', 'oignon', 'salade', 'poireau',
-      'haricot', 'poivron', 'champignon', 'épinard', 'ail', 'concombre'])) {
+    if (any([
+      'courgette',
+      'carotte',
+      'tomate',
+      'oignon',
+      'salade',
+      'poireau',
+      'haricot',
+      'poivron',
+      'champignon',
+      'épinard',
+      'ail',
+      'concombre'
+    ])) {
       return 'Légumes';
     }
-    if (any(['poulet', 'bœuf', 'boeuf', 'poisson', 'saumon', 'jambon', 'thon',
-      'dinde', 'steak', 'porc', 'merguez'])) {
+    if (any([
+      'poulet',
+      'bœuf',
+      'boeuf',
+      'poisson',
+      'saumon',
+      'jambon',
+      'thon',
+      'dinde',
+      'steak',
+      'porc',
+      'merguez'
+    ])) {
       return 'Viandes & poissons';
     }
-    if (any(['lait', 'crème', 'creme', 'fromage', 'emmental', 'beurre', 'yaourt',
-      'œuf', 'oeuf', 'mozzarella', 'parmesan'])) {
+    if (any([
+      'lait',
+      'crème',
+      'creme',
+      'fromage',
+      'emmental',
+      'beurre',
+      'yaourt',
+      'œuf',
+      'oeuf',
+      'mozzarella',
+      'parmesan'
+    ])) {
       return 'Produits laitiers';
     }
-    if (any(['pâte', 'pate', 'riz', 'coquillette', 'pomme de terre', 'pain',
-      'semoule', 'quinoa', 'spaghetti', 'lentille'])) {
+    if (any([
+      'pâte',
+      'pate',
+      'riz',
+      'coquillette',
+      'pomme de terre',
+      'pain',
+      'semoule',
+      'quinoa',
+      'spaghetti',
+      'lentille'
+    ])) {
       return 'Féculents';
     }
     return 'Épicerie';
@@ -81,7 +129,8 @@ class AppState extends ChangeNotifier {
     for (final i in missing(r)) {
       if (shopping.any((s) => s.name == i.name)) continue;
       shopping.add(ShopItem(i.name, 'Pour tes ${r.name.toLowerCase()}',
-          fmtQty(i, servings), guessCat(i.name), recipeId: r.id));
+          fmtQty(i, servings), guessCat(i.name),
+          recipeId: r.id));
     }
     notifyListeners();
   }

@@ -110,6 +110,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "nested",
+      "rootUri": "file:///home/codespace/.pub-cache/hosted/pub.dev/nested-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "objective_c",
       "rootUri": "file:///home/codespace/.pub-cache/hosted/pub.dev/objective_c-9.6.2",
       "packageUri": "lib/",
@@ -174,6 +180,12 @@
       "rootUri": "file:///home/codespace/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "provider",
+      "rootUri": "file:///home/codespace/.pub-cache/hosted/pub.dev/provider-6.1.5+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "pub_semver",

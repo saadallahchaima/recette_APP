@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/utils/theme.dart';
 import '../../../../core/utils/widgets.dart';
@@ -21,11 +22,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-        listenable: AppState.i,
+        listenable: context.read<AppState>(),
         builder: (context, _) {
-          final s = AppState.i;
-          final favs = kRecipes.where((r) => s.favorites.contains(r.id)).toList();
-          final shown = _easyOnly ? favs.where((r) => r.minutes <= 30).toList() : favs;
+          final s = context.read<AppState>();
+          final favs =
+              kRecipes.where((r) => s.favorites.contains(r.id)).toList();
+          final shown =
+              _easyOnly ? favs.where((r) => r.minutes <= 30).toList() : favs;
           return Column(
             children: [
               PageHeader(
@@ -43,15 +46,19 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   children: [
                     Wrap(spacing: 8, children: [
                       FilterChipPill('Tout · ${favs.length}',
-                          selected: !_easyOnly, onTap: () => setState(() => _easyOnly = false)),
+                          selected: !_easyOnly,
+                          onTap: () => setState(() => _easyOnly = false)),
                       FilterChipPill('Les dîners faciles',
-                          selected: _easyOnly, onTap: () => setState(() => _easyOnly = true)),
+                          selected: _easyOnly,
+                          onTap: () => setState(() => _easyOnly = true)),
                     ]),
                     const SizedBox(height: 20),
                     for (var i = 0; i < shown.length; i++)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
-                        child: i == 0 ? _big(context, shown[i]) : _compact(context, shown[i]),
+                        child: i == 0
+                            ? _big(context, shown[i])
+                            : _compact(context, shown[i]),
                       ),
                     _message(shown.isEmpty),
                   ],
@@ -63,14 +70,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
       );
 
   String _availability(Recipe r) {
-    final miss = AppState.i.missing(r);
+    final miss = context.read<AppState>().missing(r);
     return miss.isEmpty
         ? 'Tu as tout, youpi !'
         : 'Il te manque : ${miss.map((m) => m.miss ?? m.name.toLowerCase()).join(', ')}';
   }
 
   Widget _big(BuildContext context, Recipe r) {
-    final all = AppState.i.missing(r).isEmpty;
+    final all = context.read<AppState>().missing(r).isEmpty;
     return GestureDetector(
       onTap: () => openRecipe(context, r),
       child: Container(
@@ -89,7 +96,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   iconSize: 19,
                   color: Pal.pale,
                   icon: Icons.favorite_rounded,
-                  onTap: () => AppState.i.toggleFav(r.id),
+                  onTap: () => context.read<AppState>().toggleFav(r.id),
                 ),
               ),
             ]),
@@ -100,7 +107,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 style: ts(14, color: Pal.inkSoft, h: 1.35)),
             const SizedBox(height: 4),
             Text(_availability(r),
-                style: ts(14, color: all ? Pal.greenInk : Pal.primary, h: 1.35)),
+                style:
+                    ts(14, color: all ? Pal.greenInk : Pal.primary, h: 1.35)),
           ],
         ),
       ),
@@ -108,7 +116,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Widget _compact(BuildContext context, Recipe r) {
-    final all = AppState.i.missing(r).isEmpty;
+    final all = context.read<AppState>().missing(r).isEmpty;
     return GestureDetector(
       onTap: () => openRecipe(context, r),
       child: Container(
@@ -127,11 +135,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(r.name, style: ts(16, w: FontWeight.w800, h: 1.35)),
+                        child: Text(r.name,
+                            style: ts(16, w: FontWeight.w800, h: 1.35)),
                       ),
                       GestureDetector(
-                        onTap: () => AppState.i.toggleFav(r.id),
-                        child: const Icon(Icons.favorite_rounded, size: 17, color: Pal.primary),
+                        onTap: () => context.read<AppState>().toggleFav(r.id),
+                        child: const Icon(Icons.favorite_rounded,
+                            size: 17, color: Pal.primary),
                       ),
                     ],
                   ),
@@ -174,7 +184,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(empty ? 'Pas encore de chouchou' : 'Une idée qui te plaît ?',
+                Text(
+                    empty
+                        ? 'Pas encore de chouchou'
+                        : 'Une idée qui te plaît ?',
                     style: ts(15, w: FontWeight.w800, h: 1.35)),
                 const SizedBox(height: 4),
                 Text(
@@ -216,21 +229,23 @@ class ShoppingPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Annuler', style: ts(14, w: FontWeight.w800, color: Pal.inkSoft)),
+            child: Text('Annuler',
+                style: ts(14, w: FontWeight.w800, color: Pal.inkSoft)),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(ctrl.text),
-            child: Text('Ajouter', style: ts(14, w: FontWeight.w800, color: Pal.primary)),
+            child: Text('Ajouter',
+                style: ts(14, w: FontWeight.w800, color: Pal.primary)),
           ),
         ],
       ),
     );
     ctrl.dispose();
-    if (name != null) AppState.i.addCustom(name);
+    if (name != null) context.read<AppState>().addCustom(name);
   }
 
   void _share(BuildContext context) {
-    final s = AppState.i;
+    final s = context.read<AppState>();
     final lines = s.shopping
         .where((i) => !i.checked)
         .map((i) => '- ${i.name}${i.qty.isEmpty ? '' : ' (${i.qty})'}')
@@ -241,18 +256,20 @@ class ShoppingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-        listenable: AppState.i,
+        listenable: context.read<AppState>(),
         builder: (context, _) {
-          final s = AppState.i;
+          final s = context.read<AppState>();
           final todo = s.shopping.where((i) => !i.checked).length;
 
           // ingrédients déjà à la maison pour les recettes de la liste
-          final ids = s.shopping.map((i) => i.recipeId).whereType<String>().toSet();
+          final ids =
+              s.shopping.map((i) => i.recipeId).whereType<String>().toSet();
           final home = <String>[];
           for (final id in ids) {
             final r = recipeById(id);
             for (final ing in r.ings.where((i) => s.has(i.key))) {
-              final label = '${fmtQty(ing, kBaseServings)} ${ing.name.toLowerCase()}';
+              final label =
+                  '${fmtQty(ing, kBaseServings)} ${ing.name.toLowerCase()}';
               if (!home.contains(label)) home.add(label);
             }
           }
@@ -329,7 +346,8 @@ class ShoppingPage extends StatelessWidget {
                           border: Border.all(color: Pal.border),
                         ),
                         child: Row(children: [
-                          const Icon(Icons.add_rounded, size: 18, color: Pal.primary),
+                          const Icon(Icons.add_rounded,
+                              size: 18, color: Pal.primary),
                           const SizedBox(width: 10),
                           Text('Et autre chose pour la maison…',
                               style: ts(14, color: Pal.inkSoft, h: 1.35)),
@@ -364,7 +382,8 @@ class ShoppingPage extends StatelessWidget {
                     ],
                     const SizedBox(height: 22),
                     PillButton('Partager ma petite liste',
-                        icon: Icons.share_rounded, onTap: () => _share(context)),
+                        icon: Icons.share_rounded,
+                        onTap: () => _share(context)),
                     const SizedBox(height: 10),
                     Text('À deux, les courses sont encore plus légères.',
                         style: ts(14, color: Pal.inkSoft, h: 1.35)),
@@ -412,7 +431,8 @@ class ShoppingPage extends StatelessWidget {
                       border: Border.all(color: Pal.primary, width: 1.5),
                     ),
                     child: it.checked
-                        ? const Icon(Icons.check_rounded, size: 17, color: Colors.white)
+                        ? const Icon(Icons.check_rounded,
+                            size: 17, color: Colors.white)
                         : null,
                   ),
                   const SizedBox(width: 12),
@@ -425,9 +445,12 @@ class ShoppingPage extends StatelessWidget {
                                 w: FontWeight.w800,
                                 h: 1.35,
                                 color: it.checked ? Pal.inkSoft : Pal.ink,
-                                deco: it.checked ? TextDecoration.lineThrough : null)),
+                                deco: it.checked
+                                    ? TextDecoration.lineThrough
+                                    : null)),
                         const SizedBox(height: 3),
-                        Text(it.note, style: ts(14, color: Pal.inkSoft, h: 1.35)),
+                        Text(it.note,
+                            style: ts(14, color: Pal.inkSoft, h: 1.35)),
                       ],
                     ),
                   ),

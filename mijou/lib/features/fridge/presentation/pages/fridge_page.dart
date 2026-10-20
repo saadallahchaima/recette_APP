@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/utils/theme.dart';
 import '../../../../core/utils/widgets.dart';
 import '../../../recipes/data/models/data.dart';
 import '../../../recipes/presentation/controllers/app_state.dart';
 import '../../../recipes/presentation/pages/recipe_page.dart';
+import '../widgets/pantry_category_section.dart';
 
 // ───────────────────────── Mon frigo ─────────────────────────
 
@@ -21,7 +23,7 @@ class _FridgePageState extends State<FridgePage> {
   void _add() {
     final v = _ctrl.text.trim();
     if (v.isEmpty) return;
-    AppState.i.addPantry(v);
+    context.read<AppState>().addPantry(v);
     _ctrl.clear();
     FocusScope.of(context).unfocus();
   }
@@ -34,15 +36,16 @@ class _FridgePageState extends State<FridgePage> {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-        listenable: AppState.i,
+        listenable: context.read<AppState>(),
         builder: (context, _) {
-          final s = AppState.i;
+          final s = context.read<AppState>();
           final n = s.pantry.length;
           return Column(
             children: [
               PageHeader(
                 title: 'Mon petit frigo',
-                subtitle: '$n ${plural(n, 'ingrédient', 'ingrédients')}, déjà plein d’idées.',
+                subtitle:
+                    '$n ${plural(n, 'ingrédient', 'ingrédients')}, déjà plein d’idées.',
                 trailing: RoundBtn(
                   icon: Icons.qr_code_scanner_rounded,
                   onTap: () => toast(context, 'Bientôt : scanne ton frigo !'),
@@ -75,13 +78,17 @@ class _FridgePageState extends State<FridgePage> {
                     ),
                     const SizedBox(height: 18),
                     for (var c = 0; c < kCats.length; c++)
-                      _category(kCats[c], c < 3 ? Pal.pale : Pal.chip),
+                      PantryCategorySection(
+                        category: kCats[c],
+                        chipColor: c < 3 ? Pal.pale : Pal.chip,
+                      ),
                     const SizedBox(height: 4),
                     PillButton(
                       'Trouve-moi une recette',
                       icon: Icons.auto_awesome_rounded,
                       onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(builder: (_) => const ResultsPage()),
+                        MaterialPageRoute<void>(
+                            builder: (_) => const ResultsPage()),
                       ),
                     ),
                     const SizedBox(height: 9),
@@ -128,50 +135,6 @@ class _FridgePageState extends State<FridgePage> {
           ],
         ),
       );
-
-  Widget _category(Cat cat, Color chipColor) {
-    final items = AppState.i.pantry.where((p) => p.cat == cat.name).toList();
-    if (items.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 17),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            Icon(cat.icon, size: 17, color: Pal.primary),
-            const SizedBox(width: 7),
-            Text(cat.name, style: ts(14, w: FontWeight.w800, h: 1.35)),
-          ]),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 7,
-            runSpacing: 7,
-            children: [
-              for (final p in items)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: chipColor,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(p.label, style: ts(14, h: 1.35)),
-                      const SizedBox(width: 7),
-                      GestureDetector(
-                        onTap: () => AppState.i.removePantry(p),
-                        child: const Icon(Icons.close_rounded, size: 13, color: Pal.inkSoft),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 // ───────────────────────── Résultats ─────────────────────────
@@ -184,7 +147,13 @@ class ResultsPage extends StatefulWidget {
 }
 
 class _ResultsPageState extends State<ResultsPage> {
-  static const _filters = ['Rapide', 'Healthy', 'Enfants', 'Économique', 'Végétarien'];
+  static const _filters = [
+    'Rapide',
+    'Healthy',
+    'Enfants',
+    'Économique',
+    'Végétarien'
+  ];
   String? _filter = 'Rapide';
 
   @override
@@ -192,11 +161,13 @@ class _ResultsPageState extends State<ResultsPage> {
         body: SafeArea(
           bottom: false,
           child: ListenableBuilder(
-            listenable: AppState.i,
+            listenable: context.read<AppState>(),
             builder: (context, _) {
-              final s = AppState.i;
+              final s = context.read<AppState>();
               final list = kRecipes
-                  .where((r) => _filter == null || r.tags.contains(_filter!.toLowerCase()))
+                  .where((r) =>
+                      _filter == null ||
+                      r.tags.contains(_filter!.toLowerCase()))
                   .toList();
               return Column(
                 children: [
@@ -229,7 +200,8 @@ class _ResultsPageState extends State<ResultsPage> {
                               FilterChipPill(
                                 f,
                                 selected: _filter == f,
-                                onTap: () => setState(() => _filter = _filter == f ? null : f),
+                                onTap: () => setState(
+                                    () => _filter = _filter == f ? null : f),
                               ),
                           ],
                         ),
@@ -248,10 +220,12 @@ class _ResultsPageState extends State<ResultsPage> {
                         if (list.isEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 20),
-                            child: Text('Aucune idée pour ce filtre, essaie-en un autre !',
+                            child: Text(
+                                'Aucune idée pour ce filtre, essaie-en un autre !',
                                 style: ts(14, color: Pal.inkSoft)),
                           ),
-                        for (var i = 0; i < list.length; i++) _card(context, list[i], i),
+                        for (var i = 0; i < list.length; i++)
+                          _card(context, list[i], i),
                       ],
                     ),
                   ),
@@ -263,14 +237,14 @@ class _ResultsPageState extends State<ResultsPage> {
         bottomNavigationBar: MijouNavBar(
           index: 1,
           onTap: (i) {
-            AppState.i.tab.value = i;
+            context.read<AppState>().setTab(i);
             Navigator.of(context).popUntil((r) => r.isFirst);
           },
         ),
       );
 
   Widget _card(BuildContext context, Recipe r, int i) {
-    final s = AppState.i;
+    final s = context.read<AppState>();
     final miss = s.missing(r);
     final all = miss.isEmpty;
     final fav = s.favorites.contains(r.id);
@@ -295,8 +269,11 @@ class _ResultsPageState extends State<ResultsPage> {
                   left: 9,
                   top: 9,
                   child: all
-                      ? const Tag('Tout est dans ton frigo', bg: Pal.greenBg, fg: Pal.greenInk)
-                      : Tag('${s.haveCount(r)} ingrédients sur ${r.ings.length}', bg: Pal.chip),
+                      ? const Tag('Tout est dans ton frigo',
+                          bg: Pal.greenBg, fg: Pal.greenInk)
+                      : Tag(
+                          '${s.haveCount(r)} ingrédients sur ${r.ings.length}',
+                          bg: Pal.chip),
                 ),
                 Positioned(
                   right: 10,
@@ -304,7 +281,9 @@ class _ResultsPageState extends State<ResultsPage> {
                   child: RoundBtn(
                     size: 32,
                     iconSize: 18,
-                    icon: fav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    icon: fav
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
                     onTap: () => s.toggleFav(r.id),
                   ),
                 ),
@@ -327,7 +306,8 @@ class _ResultsPageState extends State<ResultsPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${r.minutes} min', style: ts(14, w: FontWeight.w800, h: 1.35)),
+                    Text('${r.minutes} min',
+                        style: ts(14, w: FontWeight.w800, h: 1.35)),
                     Text(r.level, style: ts(14, w: FontWeight.w800, h: 1.35)),
                   ],
                 ),
@@ -336,7 +316,9 @@ class _ResultsPageState extends State<ResultsPage> {
             const SizedBox(height: 10),
             Row(children: [
               Icon(
-                all ? Icons.check_circle_outline_rounded : Icons.shopping_basket_outlined,
+                all
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.shopping_basket_outlined,
                 size: 14,
                 color: all ? Pal.greenInk : Pal.inkSoft,
               ),

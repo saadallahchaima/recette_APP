@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/utils/theme.dart';
 import '../../../../core/utils/widgets.dart';
@@ -30,9 +31,9 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       body: SafeArea(
         child: ListenableBuilder(
-          listenable: AppState.i,
+          listenable: context.read<AppState>(),
           builder: (context, _) {
-            final s = AppState.i;
+            final s = context.read<AppState>();
             final miss = s.missing(r);
             final have = r.ings.where((i) => s.has(i.key)).toList();
             final fav = s.favorites.contains(r.id);
@@ -47,13 +48,16 @@ class _DetailPageState extends State<DetailPage> {
                     children: [
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
-                        child: const Icon(Icons.arrow_back_rounded, size: 22, color: Pal.primary),
+                        child: const Icon(Icons.arrow_back_rounded,
+                            size: 22, color: Pal.primary),
                       ),
                       Text(r.kicker, style: ts(14, h: 1.35)),
                       RoundBtn(
                         size: 40,
                         color: Pal.pale,
-                        icon: fav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                        icon: fav
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
                         onTap: () => s.toggleFav(r.id),
                       ),
                     ],
@@ -81,7 +85,8 @@ class _DetailPageState extends State<DetailPage> {
                   Tag(r.third, bg: Pal.greenBox),
                 ]),
                 const SizedBox(height: 21),
-                Text('Dans ton panier', style: ts(19, w: FontWeight.w800, h: 1.35)),
+                Text('Dans ton panier',
+                    style: ts(19, w: FontWeight.w800, h: 1.35)),
                 const SizedBox(height: 12),
                 _servingsRow(),
                 const SizedBox(height: 12),
@@ -91,8 +96,12 @@ class _DetailPageState extends State<DetailPage> {
                   _missBox(r, miss),
                   const SizedBox(height: 12),
                   PillButton(
-                    _added ? 'Ajouté à ta liste !' : 'Ajouter le manquant aux courses',
-                    icon: _added ? Icons.check_rounded : Icons.shopping_basket_outlined,
+                    _added
+                        ? 'Ajouté à ta liste !'
+                        : 'Ajouter le manquant aux courses',
+                    icon: _added ? Icons.check_rounded : null,
+                    imageAsset:
+                        _added ? null : 'assets/images/panier.png',
                     soft: true,
                     onTap: _added
                         ? null
@@ -107,9 +116,11 @@ class _DetailPageState extends State<DetailPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Et hop, en cuisine !', style: ts(19, w: FontWeight.w800, h: 1.35)),
+                    Text('Et hop, en cuisine !',
+                        style: ts(19, w: FontWeight.w800, h: 1.35)),
                     Text('${r.steps.length} étapes',
-                        style: ts(14, w: FontWeight.w800, color: Pal.primary, h: 1.35)),
+                        style: ts(14,
+                            w: FontWeight.w800, color: Pal.primary, h: 1.35)),
                   ],
                 ),
                 const SizedBox(height: 17),
@@ -131,7 +142,8 @@ class _DetailPageState extends State<DetailPage> {
                   'Lancer le mode cuisine',
                   icon: Icons.restaurant_rounded,
                   onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => CookingPage(recipe: r)),
+                    MaterialPageRoute<void>(
+                        builder: (_) => CookingPage(recipe: r)),
                   ),
                 ),
               ],
@@ -157,14 +169,16 @@ class _DetailPageState extends State<DetailPage> {
             child: Row(children: [
               IconButton(
                 visualDensity: VisualDensity.compact,
-                onPressed: _servings > 1 ? () => setState(() => _servings--) : null,
+                onPressed:
+                    _servings > 1 ? () => setState(() => _servings--) : null,
                 icon: const Icon(Icons.remove_rounded, size: 16),
                 color: Pal.ink,
               ),
               Text('$_servings', style: ts(14, w: FontWeight.w800, h: 1.35)),
               IconButton(
                 visualDensity: VisualDensity.compact,
-                onPressed: _servings < 12 ? () => setState(() => _servings++) : null,
+                onPressed:
+                    _servings < 12 ? () => setState(() => _servings++) : null,
                 icon: const Icon(Icons.add_rounded, size: 16),
                 color: Pal.ink,
               ),
@@ -184,16 +198,19 @@ class _DetailPageState extends State<DetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('DÉJÀ DANS TON FRIGO · ${have.length}/${r.ings.length}',
-                style: ts(14, w: FontWeight.w800, color: Pal.greenDeep, h: 1.35)),
+                style:
+                    ts(14, w: FontWeight.w800, color: Pal.greenDeep, h: 1.35)),
             const SizedBox(height: 11),
             for (final i in have)
               Padding(
                 padding: const EdgeInsets.only(bottom: 11),
                 child: Row(children: [
-                  const Icon(Icons.check_rounded, size: 15, color: Pal.greenDeep),
+                  const Icon(Icons.check_rounded,
+                      size: 15, color: Pal.greenDeep),
                   const SizedBox(width: 8),
                   Expanded(child: Text(i.name, style: ts(14, h: 1.35))),
-                  Text(fmtQty(i, _servings), style: ts(14, w: FontWeight.w800, h: 1.35)),
+                  Text(fmtQty(i, _servings),
+                      style: ts(14, w: FontWeight.w800, h: 1.35)),
                 ]),
               ),
           ],
@@ -219,12 +236,16 @@ class _DetailPageState extends State<DetailPage> {
                     children: [
                       Text(i.name, style: ts(14, w: FontWeight.w800, h: 1.35)),
                       const SizedBox(height: 2),
-                      Text(miss.length == 1 ? 'Le seul petit manquant' : 'Un petit manquant',
+                      Text(
+                          miss.length == 1
+                              ? 'Le seul petit manquant'
+                              : 'Un petit manquant',
                           style: ts(14, color: Pal.primary, h: 1.35)),
                     ],
                   ),
                 ),
-                Text(fmtQty(i, _servings), style: ts(14, w: FontWeight.w800, h: 1.35)),
+                Text(fmtQty(i, _servings),
+                    style: ts(14, w: FontWeight.w800, h: 1.35)),
               ]),
             ),
         ],
@@ -239,9 +260,11 @@ class _DetailPageState extends State<DetailPage> {
               width: 30,
               height: 30,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(color: Pal.pale, shape: BoxShape.circle),
+              decoration:
+                  const BoxDecoration(color: Pal.pale, shape: BoxShape.circle),
               child: Text('${i + 1}',
-                  style: ts(14, w: FontWeight.w800, color: Pal.primary, h: 1.35)),
+                  style:
+                      ts(14, w: FontWeight.w800, color: Pal.primary, h: 1.35)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -270,7 +293,12 @@ class CookingPage extends StatefulWidget {
 }
 
 class _CookingPageState extends State<CookingPage> {
-  static const _moods = ['C’est parti !', 'Ça sent déjà bon…', 'Presque là…', 'À table !'];
+  static const _moods = [
+    'C’est parti !',
+    'Ça sent déjà bon…',
+    'Presque là…',
+    'À table !'
+  ];
 
   int _step = 0;
   int _left = 0;
@@ -359,13 +387,16 @@ class _CookingPageState extends State<CookingPage> {
                       _timer?.cancel();
                       Navigator.of(context).pop();
                     },
-                    child: const Icon(Icons.close_rounded, size: 22, color: Pal.primary),
+                    child: const Icon(Icons.close_rounded,
+                        size: 22, color: Pal.primary),
                   ),
                   Text(r.name, style: ts(14, w: FontWeight.w800, h: 1.35)),
                   GestureDetector(
                     onTap: () => setState(() => _sound = !_sound),
                     child: Icon(
-                      _sound ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                      _sound
+                          ? Icons.volume_up_rounded
+                          : Icons.volume_off_rounded,
                       size: 22,
                       color: Pal.primary,
                     ),
@@ -377,7 +408,8 @@ class _CookingPageState extends State<CookingPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('ÉTAPE ${_step + 1} SUR ${r.steps.length}',
-                      style: ts(14, w: FontWeight.w800, color: Pal.primary, h: 1.35)),
+                      style: ts(14,
+                          w: FontWeight.w800, color: Pal.primary, h: 1.35)),
                   Text(_moods[_step % _moods.length],
                       style: ts(14, w: FontWeight.w600, h: 1.35)),
                 ],
@@ -416,7 +448,8 @@ class _CookingPageState extends State<CookingPage> {
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: Pal.border),
                     ),
-                    child: Text(_cur.tip, style: ts(14, w: FontWeight.w600, h: 1.35)),
+                    child: Text(_cur.tip,
+                        style: ts(14, w: FontWeight.w600, h: 1.35)),
                   ),
                 ),
               ]),
@@ -435,7 +468,9 @@ class _CookingPageState extends State<CookingPage> {
                 Expanded(
                   child: PillButton(
                     last ? 'C’est prêt !' : 'Étape suivante',
-                    icon: last ? Icons.check_rounded : Icons.arrow_forward_rounded,
+                    icon: last
+                        ? Icons.check_rounded
+                        : Icons.arrow_forward_rounded,
                     onTap: _next,
                   ),
                 ),
@@ -462,7 +497,8 @@ class _CookingPageState extends State<CookingPage> {
               const Icon(Icons.timer_outlined, size: 18, color: Pal.primary),
               const SizedBox(width: 7),
               Text('LE PETIT MINUTEUR',
-                  style: ts(14, w: FontWeight.w800, color: Pal.primary, h: 1.35)),
+                  style:
+                      ts(14, w: FontWeight.w800, color: Pal.primary, h: 1.35)),
             ]),
             const SizedBox(height: 12),
             Text(_clock, style: ts(54, w: FontWeight.w800, h: 1.35)),
@@ -496,11 +532,18 @@ class _CookingPageState extends State<CookingPage> {
                       child: SizedBox(
                         height: 46,
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(_running ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                              size: 19, color: Colors.white),
+                          Icon(
+                              _running
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                              size: 19,
+                              color: Colors.white),
                           const SizedBox(width: 9),
                           Text(_running ? 'Pause' : 'Démarrer',
-                              style: ts(14, w: FontWeight.w800, color: Colors.white, h: 1.35)),
+                              style: ts(14,
+                                  w: FontWeight.w800,
+                                  color: Colors.white,
+                                  h: 1.35)),
                         ]),
                       ),
                     ),
@@ -518,7 +561,8 @@ class _CookingPageState extends State<CookingPage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Pal.border),
                     ),
-                    child: Text('+1 min', style: ts(11, w: FontWeight.w800, h: 1.2)),
+                    child: Text('+1 min',
+                        style: ts(11, w: FontWeight.w800, h: 1.2)),
                   ),
                 ),
               ],

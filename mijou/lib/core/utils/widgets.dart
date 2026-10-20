@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../features/recipes/data/models/data.dart';
 import '../../features/recipes/presentation/controllers/app_state.dart';
 import 'theme.dart';
@@ -7,7 +8,8 @@ void toast(BuildContext context, String message) {
   final m = ScaffoldMessenger.of(context);
   m.hideCurrentSnackBar();
   m.showSnackBar(SnackBar(
-    content: Text(message, style: ts(14, w: FontWeight.w800, color: Colors.white)),
+    content:
+        Text(message, style: ts(14, w: FontWeight.w800, color: Colors.white)),
     backgroundColor: Pal.primary,
     behavior: SnackBarBehavior.floating,
     margin: const EdgeInsets.fromLTRB(24, 0, 24, 96),
@@ -30,7 +32,8 @@ class MijouMascot extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(
         width: size,
         height: size,
-        child: CustomPaint(painter: _MascotPainter(wink: wink, sparkle: size >= 70)),
+        child: CustomPaint(
+            painter: _MascotPainter(wink: wink, sparkle: size >= 70)),
       );
 }
 
@@ -56,7 +59,8 @@ class _MascotPainter extends CustomPainter {
     }
 
     void rrect(double l, double t, double w, double h, double rad, Color c) {
-      final r = RRect.fromRectAndRadius(Rect.fromLTWH(l, t, w, h), Radius.circular(rad));
+      final r = RRect.fromRectAndRadius(
+          Rect.fromLTWH(l, t, w, h), Radius.circular(rad));
       canvas.drawRRect(r, fill(c));
       canvas.drawRRect(r, line);
     }
@@ -88,7 +92,8 @@ class _MascotPainter extends CustomPainter {
       canvas.drawOval(const Rect.fromLTWH(44.28, 37.44, 3.24, 4.68), eye);
     }
     canvas.drawOval(const Rect.fromLTWH(18, 44.64, 7.2, 3.6), fill(Pal.cheek));
-    canvas.drawOval(const Rect.fromLTWH(46.8, 44.64, 7.2, 3.6), fill(Pal.cheek));
+    canvas.drawOval(
+        const Rect.fromLTWH(46.8, 44.64, 7.2, 3.6), fill(Pal.cheek));
     final smile = Path()
       ..moveTo(30.24, 46.6)
       ..quadraticBezierTo(36, 53.2, 41.76, 46.6);
@@ -146,7 +151,8 @@ class PhotoBox extends StatelessWidget {
             errorBuilder: (_, __, ___) => Container(
               color: Pal.pale,
               alignment: Alignment.center,
-              child: Text(recipe.emoji, style: TextStyle(fontSize: height > 100 ? 44 : 30)),
+              child: Text(recipe.emoji,
+                  style: TextStyle(fontSize: height > 100 ? 44 : 30)),
             ),
           ),
         ),
@@ -158,10 +164,7 @@ class Tag extends StatelessWidget {
   final Color bg, fg;
   final Color? border;
   const Tag(this.text,
-      {super.key,
-      this.bg = Pal.pale,
-      this.fg = Pal.ink,
-      this.border});
+      {super.key, this.bg = Pal.pale, this.fg = Pal.ink, this.border});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -171,7 +174,8 @@ class Tag extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           border: border == null ? null : Border.all(color: border!),
         ),
-        child: Text(text, style: ts(14, w: FontWeight.w800, color: fg, h: 1.35)),
+        child:
+            Text(text, style: ts(14, w: FontWeight.w800, color: fg, h: 1.35)),
       );
 }
 
@@ -180,7 +184,8 @@ class FilterChipPill extends StatelessWidget {
   final String text;
   final bool selected;
   final VoidCallback onTap;
-  const FilterChipPill(this.text, {super.key, required this.selected, required this.onTap});
+  const FilterChipPill(this.text,
+      {super.key, required this.selected, required this.onTap});
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -205,9 +210,15 @@ class FilterChipPill extends StatelessWidget {
 class PillButton extends StatelessWidget {
   final String label;
   final IconData? icon;
+  final String? imageAsset;
   final VoidCallback? onTap;
   final bool soft;
-  const PillButton(this.label, {super.key, this.icon, this.onTap, this.soft = false});
+  const PillButton(this.label,
+      {super.key,
+      this.icon,
+      this.imageAsset,
+      this.onTap,
+      this.soft = false});
 
   @override
   Widget build(BuildContext context) {
@@ -229,9 +240,12 @@ class PillButton extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: ts(15, w: FontWeight.w800, color: fg, h: 1.35)),
               ),
-              if (icon != null) ...[
+              if (icon != null || imageAsset != null) ...[
                 const SizedBox(width: 10),
-                Icon(icon, size: 19, color: fg),
+                if (imageAsset != null)
+                  Image.asset(imageAsset!, width: 22, height: 22)
+                else
+                  Icon(icon, size: 19, color: fg),
               ],
             ],
           ),
@@ -378,15 +392,14 @@ class MijouNavBar extends StatelessWidget {
     'assets/images/frigo.png',
     'assets/images/favourite.png',
     'assets/images/course.png',
-
   ];
   static const _labels = ['Accueil', 'Mon frigo', 'Favoris', 'Courses'];
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-        listenable: AppState.i,
+        listenable: context.read<AppState>(),
         builder: (context, _) {
-          final count = AppState.i.toBuy;
+          final count = context.read<AppState>().toBuy;
           return SafeArea(
             top: false,
             child: Padding(
@@ -443,11 +456,13 @@ class MijouNavBar extends StatelessWidget {
                                         ],
                                       ),
                                       child: Image.asset(
-                                           _icons[i],
-                                           width: 26,
-                                           height: 26,
-                                           fit: BoxFit.contain,
-                                  ),
+                                        _icons[i],
+                                        width: 16,
+                                        height: 16,
+                                        fit: BoxFit.contain,
+                                        color: Colors.white,
+                                        colorBlendMode: BlendMode.srcIn,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -466,13 +481,14 @@ class MijouNavBar extends StatelessWidget {
                                 ),
                               ] else
                                 Center(
-                                  //child: Icon(_icons[i], size: 26, color: Pal.primary),
                                   child: Image.asset(
-  _icons[i],
-  width: 26,
-  height: 26,
-  fit: BoxFit.contain,
-),
+                                    _icons[i],
+                                    width: 26,
+                                    height: 26,
+                                    fit: BoxFit.contain,
+                                    color: Pal.primary,
+                                    colorBlendMode: BlendMode.srcIn,
+                                  ),
                                 ),
                               if (i == 3 && count > 0)
                                 Positioned(
@@ -486,10 +502,13 @@ class MijouNavBar extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: Pal.primary,
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Pal.cream, width: 2),
+                                      border: Border.all(
+                                          color: Pal.cream, width: 2),
                                     ),
                                     child: Text('$count',
-                                        style: ts(11, w: FontWeight.w800, color: Colors.white)),
+                                        style: ts(11,
+                                            w: FontWeight.w800,
+                                            color: Colors.white)),
                                   ),
                                 ),
                             ],
