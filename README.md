@@ -1,3 +1,11 @@
+
+
+## 🎬 Démonstration de l’application
+
+Découvrez l’application en action à travers cette vidéo de démonstration.
+
+https://github.com/user-attachments/assets/40ae8a7d-c465-467a-8c60-fcf0fa8539f2
+
 ## 📱 Aperçu de l’application
 
 Découvrez les principales interfaces de l’application mobile à travers les captures d’écran suivantes.
