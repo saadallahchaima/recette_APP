@@ -432,8 +432,8 @@ class MijouNavBar extends StatelessWidget {
                             children: [
                               if (active) ...[
                                 Positioned(
-                                  left: 4,
-                                  top: -7,
+                                  left: 10,
+                                  top: 2,
                                   child: TweenAnimationBuilder<double>(
                                     key: ValueKey('bubble$index'),
                                     tween: Tween(begin: 0.6, end: 1),
@@ -442,8 +442,8 @@ class MijouNavBar extends StatelessWidget {
                                     builder: (_, v, child) =>
                                         Transform.scale(scale: v, child: child),
                                     child: Container(
-                                      width: 46,
-                                      height: 46,
+                                      width: 32,
+                                      height: 32,
                                       decoration: const BoxDecoration(
                                         color: Pal.primary,
                                         shape: BoxShape.circle,
@@ -455,19 +455,21 @@ class MijouNavBar extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      child: Image.asset(
-                                        _icons[i],
-                                        width: 16,
-                                        height: 16,
-                                        fit: BoxFit.contain,
-                                        color: Colors.white,
-                                        colorBlendMode: BlendMode.srcIn,
+                                      child: Center(
+                                        child: Image.asset(
+                                          _icons[i],
+                                          width: 14,
+                                          height: 14,
+                                          fit: BoxFit.contain,
+                                          color: Colors.white,
+                                          colorBlendMode: BlendMode.srcIn,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                                 Positioned(
-                                  left: 56,
+                                  left: 50,
                                   top: 0,
                                   bottom: 0,
                                   right: 4,

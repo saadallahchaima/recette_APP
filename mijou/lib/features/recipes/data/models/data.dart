@@ -21,10 +21,27 @@ const kCats = <Cat>[
 /// Un ingrédient présent dans le frigo.
 class Pantry {
   final String name;
-  final String qty;
+  String qty;
   final String cat;
-  Pantry(this.name, this.qty, this.cat);
+  DateTime? expiry;
+  Pantry(this.name, this.qty, this.cat, {this.expiry});
   String get label => qty.isEmpty ? name : '$name · $qty';
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'qty': qty,
+        'cat': cat,
+        'expiry': expiry?.toIso8601String(),
+      };
+
+  factory Pantry.fromJson(Map<String, dynamic> json) => Pantry(
+        json['name'] as String,
+        json['qty'] as String? ?? '',
+        json['cat'] as String,
+        expiry: json['expiry'] == null
+            ? null
+            : DateTime.tryParse(json['expiry'] as String),
+      );
 }
 
 /// Un ingrédient d'une recette.
@@ -55,6 +72,9 @@ class Recipe {
   final Set<String> tags;
   final List<Ing> ings;
   final List<CookStep> steps;
+  final double budget;
+  final Map<String, String> substitutions;
+  final Set<String> wasteKeys;
   Recipe({
     required this.id,
     required this.name,
@@ -70,6 +90,9 @@ class Recipe {
     required this.ings,
     required this.steps,
     this.level = 'Facile',
+    this.budget = 2.5,
+    this.substitutions = const {},
+    this.wasteKeys = const {},
   });
 
   /// Photo à déposer dans assets/images/<id>.png
@@ -109,6 +132,9 @@ final List<Recipe> kRecipes = [
       Ing('Sel', 'sel', 1, 'pincée', scales: false),
       Ing('Emmental râpé', 'emmental', 80, 'g', miss: '80 g d’emmental'),
     ],
+    budget: 2.5,
+    substitutions: const {'emmental': 'mozzarella ou levure alimentaire'},
+    wasteKeys: {'courgette', 'crème'},
     steps: [
       CookStep(
           'On se prépare',
@@ -155,6 +181,9 @@ final List<Recipe> kRecipes = [
       Ing('Huile d’olive', 'huile', 1, 'c. à soupe', scales: false),
       Ing('Sel', 'sel', 1, 'pincée', scales: false),
     ],
+    budget: 3.5,
+    substitutions: const {'poulet': 'pois chiches', 'crème': 'yaourt nature'},
+    wasteKeys: {'carotte', 'crème'},
     steps: [
       CookStep('On coupe tout',
           'Coupe le poulet en petits morceaux et les carottes en rondelles.', 5,
@@ -195,6 +224,9 @@ final List<Recipe> kRecipes = [
       Ing('Huile d’olive', 'huile', 1, 'c. à soupe', scales: false),
       Ing('Sel', 'sel', 1, 'pincée', scales: false),
     ],
+    budget: 2,
+    substitutions: const {'œuf': '1 c. à soupe de maïzena'},
+    wasteKeys: {'carotte', 'riz'},
     steps: [
       CookStep('On râpe', 'Épluche et râpe les carottes.', 5,
           tip: 'Une râpe à gros trous, c’est parfait.'),
@@ -218,9 +250,28 @@ final List<Recipe> kRecipes = [
 Recipe recipeById(String id) => kRecipes.firstWhere((r) => r.id == id);
 
 class ShopItem {
-  final String name, note, qty, cat;
+  final String name, note, cat;
+  String qty;
   final String? recipeId;
   bool checked;
   ShopItem(this.name, this.note, this.qty, this.cat,
       {this.recipeId, this.checked = false});
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'note': note,
+        'qty': qty,
+        'cat': cat,
+        'recipeId': recipeId,
+        'checked': checked,
+      };
+
+  factory ShopItem.fromJson(Map<String, dynamic> json) => ShopItem(
+        json['name'] as String,
+        json['note'] as String? ?? '',
+        json['qty'] as String? ?? '',
+        json['cat'] as String,
+        recipeId: json['recipeId'] as String?,
+        checked: json['checked'] as bool? ?? false,
+      );
 }

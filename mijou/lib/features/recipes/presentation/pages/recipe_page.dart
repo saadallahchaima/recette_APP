@@ -93,7 +93,7 @@ class _DetailPageState extends State<DetailPage> {
                 if (have.isNotEmpty) _haveBox(r, have),
                 if (miss.isNotEmpty) ...[
                   const SizedBox(height: 12),
-                  _missBox(r, miss),
+                  _missBox(context, r, miss),
                   const SizedBox(height: 12),
                   PillButton(
                     _added
@@ -217,7 +217,9 @@ class _DetailPageState extends State<DetailPage> {
         ),
       );
 
-  Widget _missBox(Recipe r, List<Ing> miss) => Column(
+  Widget _missBox(BuildContext context, Recipe r, List<Ing> miss) {
+    final state = context.read<AppState>();
+    return Column(
         children: [
           for (final i in miss)
             Container(
@@ -237,9 +239,11 @@ class _DetailPageState extends State<DetailPage> {
                       Text(i.name, style: ts(14, w: FontWeight.w800, h: 1.35)),
                       const SizedBox(height: 2),
                       Text(
-                          miss.length == 1
-                              ? 'Le seul petit manquant'
-                              : 'Un petit manquant',
+                          state.substitutionFor(r, i) == null
+                              ? (miss.length == 1
+                                  ? 'Le seul petit manquant'
+                                  : 'Un petit manquant')
+                              : 'Alternative : ${state.substitutionFor(r, i)}',
                           style: ts(14, color: Pal.primary, h: 1.35)),
                     ],
                   ),
@@ -250,6 +254,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
         ],
       );
+  }
 
   Widget _step(int i, CookStep st) => Padding(
         padding: const EdgeInsets.only(bottom: 17),

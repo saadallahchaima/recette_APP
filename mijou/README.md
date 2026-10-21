@@ -84,4 +84,10 @@ lib/
 *Fait avec ❤️ et Flutter pour rendre la cuisine plus simple au quotidien.*
 
 **NB :** Cette application est encore en cours de développement. Je continue d’y ajouter de nouvelles fonctionnalités, d’explorer de nouvelles idées et de l’améliorer au fil du temps. Ce projet est bien plus qu’une simple application : c’est un espace personnel qui réunit ma créativité et mon amour pour la cuisine. J’adore son concept, son ambiance et sa palette de couleurs. C’est mon petit univers, un espace de détente où je peux laisser libre cours à mon imagination, explorer de nouvelles idées culinaires et créer une expérience qui me ressemble. 💚🍲
+## Qualité et évolutivité
 
+- Les favoris, le frigo et la liste de courses sont persistés localement avec Hive.
+- Les recettes sont accessibles via `RecipeRepository`, ce qui permet de remplacer
+  la source locale par une API sans modifier l’interface.
+- `RecommendRecipes` centralise les règles de classement et possède des tests.
+- GitHub Actions exécute `flutter analyze` et `flutter test` à chaque push et pull request.

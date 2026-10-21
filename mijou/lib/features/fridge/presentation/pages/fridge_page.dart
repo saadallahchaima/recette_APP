@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/errors/recipe_errors.dart';
 import '../../../../core/utils/theme.dart';
 import '../../../../core/utils/widgets.dart';
 import '../../../recipes/data/models/data.dart';
@@ -155,6 +156,11 @@ class _ResultsPageState extends State<ResultsPage> {
     'Végétarien'
   ];
   String? _filter = 'Rapide';
+  double _maxMinutes = 30;
+  double _maxBudget = 6;
+  bool _timeEnabled = false;
+  bool _budgetEnabled = false;
+  bool _antiWaste = false;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -164,11 +170,8 @@ class _ResultsPageState extends State<ResultsPage> {
             listenable: context.read<AppState>(),
             builder: (context, _) {
               final s = context.read<AppState>();
-              final list = kRecipes
-                  .where((r) =>
-                      _filter == null ||
-                      r.tags.contains(_filter!.toLowerCase()))
-                  .toList();
+              final list = _filteredRecipes(s);
+              final error = _validateFilters();
               return Column(
                 children: [
                   PageHeader(
@@ -185,7 +188,12 @@ class _ResultsPageState extends State<ResultsPage> {
                       size: 44,
                       color: Pal.border,
                       icon: Icons.tune_rounded,
-                      onTap: () => setState(() => _filter = null),
+                      onTap: () => setState(() {
+                        _filter = null;
+                        _timeEnabled = false;
+                        _budgetEnabled = false;
+                        _antiWaste = false;
+                      }),
                     ),
                   ),
                   Expanded(
@@ -205,6 +213,39 @@ class _ResultsPageState extends State<ResultsPage> {
                               ),
                           ],
                         ),
+                        const SizedBox(height: 10),
+                        _sliderFilter(
+                          title: 'Budget maximum',
+                          value: _maxBudget,
+                          min: 1,
+                          max: 10,
+                          divisions: 18,
+                          suffix: '€',
+                          enabled: _budgetEnabled,
+                          onToggle: () => setState(
+                              () => _budgetEnabled = !_budgetEnabled),
+                          onChanged: (value) =>
+                              setState(() => _maxBudget = value),
+                        ),
+                        _sliderFilter(
+                          title: 'Temps maximum',
+                          value: _maxMinutes,
+                          min: 10,
+                          max: 30,
+                          divisions: 2,
+                          suffix: 'min',
+                          enabled: _timeEnabled,
+                          onToggle: () =>
+                              setState(() => _timeEnabled = !_timeEnabled),
+                          onChanged: (value) =>
+                              setState(() => _maxMinutes = value),
+                        ),
+                        FilterChipPill(
+                          'Anti-gaspillage',
+                          selected: _antiWaste,
+                          onTap: () =>
+                              setState(() => _antiWaste = !_antiWaste),
+                        ),
                         const SizedBox(height: 18),
                         Row(children: [
                           const MijouMascot(size: 42),
@@ -217,7 +258,13 @@ class _ResultsPageState extends State<ResultsPage> {
                           ),
                         ]),
                         const SizedBox(height: 18),
-                        if (list.isEmpty)
+                        if (error != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: Text(error.message,
+                                style: ts(14, color: Pal.primary)),
+                          )
+                        else if (list.isEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 20),
                             child: Text(
@@ -332,9 +379,81 @@ class _ResultsPageState extends State<ResultsPage> {
                 ),
               ),
             ]),
+            if (miss.any((ingredient) => s.substitutionFor(r, ingredient) != null))
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  'Substitutions : ${miss.where((ingredient) => s.substitutionFor(r, ingredient) != null).map((ingredient) => '${ingredient.name} → ${s.substitutionFor(r, ingredient)}').join(', ')}',
+                  style: ts(13, color: Pal.greenInk, h: 1.35),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
+
+  List<Recipe> _filteredRecipes(AppState state) {
+    final recipes = kRecipes.where((r) {
+      final matchesTag =
+          _filter == null || r.tags.contains(_filter!.toLowerCase());
+      final matchesTime = !_timeEnabled || r.minutes <= _maxMinutes;
+      final matchesBudget = !_budgetEnabled || r.budget <= _maxBudget;
+      return matchesTag && matchesTime && matchesBudget;
+    }).toList();
+    if (_antiWaste) {
+      recipes.sort((a, b) => state.wasteScore(b).compareTo(state.wasteScore(a)));
+    } else {
+      recipes.sort((a, b) {
+        final availability = state.availableScore(b).compareTo(
+            state.availableScore(a));
+        if (availability != 0) return availability;
+        final missing = state.missing(a).length.compareTo(state.missing(b).length);
+        if (missing != 0) return missing;
+        return a.minutes.compareTo(b.minutes);
+      });
+    }
+    return recipes;
+  }
+
+  RecipeDataException? _validateFilters() {
+    if (_timeEnabled && (_maxMinutes < 10 || _maxMinutes > 30)) {
+      return const RecipeDataException('Le temps doit être de 10, 20 ou 30 minutes.');
+    }
+    if (_budgetEnabled && (_maxBudget < 1 || _maxBudget > 10)) {
+      return const RecipeDataException('Le budget doit être compris entre 1 et 10 euros.');
+    }
+    return null;
+  }
+
+  Widget _sliderFilter({
+    required String title,
+    required double value,
+    required double min,
+    required double max,
+    required int divisions,
+    required String suffix,
+    required bool enabled,
+    required VoidCallback onToggle,
+    required ValueChanged<double> onChanged,
+  }) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Expanded(
+                child: Text('$title : ${value.round()} $suffix',
+                    style: ts(14, w: FontWeight.w800))),
+            Switch.adaptive(value: enabled, onChanged: (_) => onToggle()),
+          ]),
+          Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            label: '${value.round()} $suffix',
+            onChanged: enabled ? onChanged : null,
+          ),
+        ],
+      );
 }
