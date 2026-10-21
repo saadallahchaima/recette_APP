@@ -56,6 +56,31 @@ flutter run
 
 Créer une application mobile agréable et simple à utiliser pour faciliter le choix des repas, valoriser les ingrédients déjà disponibles et accompagner l’utilisateur pendant la préparation des recettes.
 
+## Lancer le projet
+
+```bash
+cd mijou
+flutter create . --platforms=android,ios   # génère les dossiers android/ et ios/
+flutter pub get
+flutter run
+```
+
+## Structure
+
+```
+lib/
+  main.dart           démarrage + 4 onglets + navbar flottante
+  theme.dart          couleurs (Pal), police Nunito, ombres
+  data.dart           recettes, état de l'app (frigo, favoris, courses)
+  widgets.dart        mascotte dessinée en code, navbar, boutons, étiquettes
+  pages_home.dart     accueil + menu (avatar)
+  pages_fridge.dart   mon frigo + résultats
+  pages_recipe.dart   détail recette + mode cuisine (minuteur)
+  pages_lists.dart    favoris + liste de courses
+```
+
+
+
 *Fait avec ❤️ et Flutter pour rendre la cuisine plus simple au quotidien.*
 
 **NB :** Cette application est encore en cours de développement. Je continue d’y ajouter de nouvelles fonctionnalités, d’explorer de nouvelles idées et de l’améliorer au fil du temps. Ce projet est bien plus qu’une simple application : c’est un espace personnel qui réunit ma créativité et mon amour pour la cuisine. J’adore son concept, son ambiance et sa palette de couleurs. C’est mon petit univers, un espace de détente où je peux laisser libre cours à mon imagination, explorer de nouvelles idées culinaires et créer une expérience qui me ressemble. 💚🍲
