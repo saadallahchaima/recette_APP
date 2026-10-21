@@ -58,5 +58,5 @@ Créer une application mobile agréable et simple à utiliser pour faciliter le 
 
 *Fait avec ❤️ et Flutter pour rendre la cuisine plus simple au quotidien.*
 
-**NB :** Cette application est encore en cours de développement. Je continue d’y ajouter de nouvelles fonctionnalités, d’explorer des idées et de l’améliorer au fil du temps. C’est mon petit projet personnel, mon espace de détente, un endroit où je peux exprimer ma créativité. J’adore son ambiance, son concept et ses couleurs. C’est un peu comme mon propre petit monde, une échappatoire que je construis à mon image. 💚
+**NB :** Cette application est encore en cours de développement. Je continue d’y ajouter de nouvelles fonctionnalités, d’explorer de nouvelles idées et de l’améliorer au fil du temps. Ce projet est bien plus qu’une simple application : c’est un espace personnel qui réunit ma créativité et mon amour pour la cuisine. J’adore son concept, son ambiance et sa palette de couleurs. C’est mon petit univers, un espace de détente où je peux laisser libre cours à mon imagination, explorer de nouvelles idées culinaires et créer une expérience qui me ressemble. 💚🍲
 
